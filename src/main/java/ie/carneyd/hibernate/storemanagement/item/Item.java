@@ -5,16 +5,28 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 @Entity
+@ApiModel(description="Inventory Item in the Store")
 public class Item {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
+	@ApiModelProperty(notes="Primary Key for the Item")  
 	private long id;
 	
+	@ApiModelProperty(notes="Item Name")  
 	private String itemName;
+	
+	@ApiModelProperty(notes="Item Brand")
 	private String itemBrand;
+	
+	@ApiModelProperty(notes="Quantity of Items")
 	private int quantity;
+	
+	@ApiModelProperty(notes="Price of individual Items")
 	private double price;
 	
 	protected Item() {}

@@ -22,6 +22,8 @@ import ie.carneyd.hibernate.storemanagement.cache.CacheItem;
 import ie.carneyd.hibernate.storemanagement.item.Item;
 import ie.carneyd.hibernate.storemanagement.repository.ItemDeleteRepository;
 import ie.carneyd.hibernate.storemanagement.repository.ItemRepository;
+import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.websocket.server.PathParam;
 
@@ -37,8 +39,12 @@ public class StoreManagementController {
 	@Autowired
 	Cache cache;
 
+	@Operation(summary="Save an Item to the Database")
 	@PostMapping(path="/item", consumes=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Item> createItem(@RequestBody Item item) {
+	public ResponseEntity<Item> createItem(
+			@io.swagger.v3.oas.annotations.parameters.RequestBody(
+					description="Item for Creation", required=true)
+			@RequestBody Item item) {
 		Item itemCreated;
 
 		try {
@@ -50,8 +56,12 @@ public class StoreManagementController {
 		return new ResponseEntity<>(itemCreated, HttpStatus.OK);
 	}
 
+	@Operation(summary="Save a list of Items to the Database")
 	@PostMapping(path="/all-items", consumes=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Iterable<Item>> createItem(@RequestBody List<Item> items) {
+	public ResponseEntity<Iterable<Item>> createItems(
+			@io.swagger.v3.oas.annotations.parameters.RequestBody(
+					description="Items for Creation", required=true)
+			@RequestBody List<Item> items) {
 		Iterable<Item> itemsCreated;
 
 		try {
@@ -63,8 +73,10 @@ public class StoreManagementController {
 		return new ResponseEntity<>(itemsCreated, HttpStatus.OK);
 	}
 
+	@Operation(summary="Get an Item by Primary Key")
 	@GetMapping("/item/{id}")
-	public Item getItem(HttpServletRequest req, @PathVariable("id") long id) throws Exception {
+	public Item getItem(HttpServletRequest req, 
+			@ApiParam(name= "id", value="Primary Key of the Item", required=true) @PathVariable("id") long id) throws Exception {
 		// Check the cache for this address
 		CacheItem item = cache.retrieveIfExistsAndNewerThan2Hours(req.getRequestURI());
 
@@ -81,8 +93,10 @@ public class StoreManagementController {
 		}
 	}
 
+	@Operation(summary="Search for Items by Name")
 	@GetMapping("/item/name/{name}")
-	public Page<Item> getItemByName(HttpServletRequest req, @PathParam("name") String name, 
+	public Page<Item> getItemsByName(HttpServletRequest req, 
+			@ApiParam(name="name", value="Name of the Item", required=true) @PathParam("name") String name, 
 			@RequestParam(defaultValue="0") int page, @RequestParam(defaultValue="20") int size) throws Exception {
 		// Check the cache for this address
 		CacheItem item = cache.retrieveIfExistsAndNewerThan2Hours(req.getRequestURI());
@@ -100,8 +114,10 @@ public class StoreManagementController {
 		}
 	}
 
+	@Operation(summary="Search for Items by Brand")
 	@GetMapping("/item/brand/{brand}")
-	public Page<Item> getItemByBrand(HttpServletRequest req, @PathParam("brand") String brand, 
+	public Page<Item> getItemsByBrand(HttpServletRequest req, 
+			@ApiParam(name="brand", value = "Brand of the Item", required=true) @PathParam("brand") String brand, 
 			@RequestParam(defaultValue="0") int page, @RequestParam(defaultValue="20") int size) throws Exception {
 		// Check the cache for this address
 		CacheItem item = cache.retrieveIfExistsAndNewerThan2Hours(req.getRequestURI());
@@ -119,6 +135,7 @@ public class StoreManagementController {
 		}
 	}
 
+	@Operation(summary="Get all Items")
 	@GetMapping("/all-items")
 	public Page<Item> getAllItems(HttpServletRequest req, 
 			@RequestParam(defaultValue="0") int page, @RequestParam(defaultValue="5") int size) throws Exception {
@@ -138,15 +155,21 @@ public class StoreManagementController {
 		}
 	}
 
+	@Operation(summary="Delete Item by Primary Key")
 	@DeleteMapping("/item/{id}")
-	public ResponseEntity deleteItem(@PathVariable("id") Long id) throws Exception {
+	public ResponseEntity deleteItem(
+			@ApiParam(name="id", value="Primary Key of the Item", required=true) @PathVariable("id") Long id) throws Exception {
 		deleteRepo.deleteById(id);
 
 		return ResponseEntity.ok().build();
 	}
 
+	@Operation(summary="Update Item")
 	@PatchMapping(path="/item", consumes=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Item> updateCustomerContacts(@RequestBody Item itemPassed) {
+	public ResponseEntity<Item> updateItem(
+			@io.swagger.v3.oas.annotations.parameters.RequestBody(
+					description="Item for Updating", required=true)
+			@RequestBody Item itemPassed) {
 		Item itemToUpdate;
 
 		try {
