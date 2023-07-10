@@ -22,6 +22,14 @@ public class Cache {
 	public int getCAPACITY() {
 		return CAPACITY;
 	}
+	
+	public int usedCacheSize() {
+		return cache.keySet().size();
+	}
+	
+	public boolean cacheContainsKey(String url) {
+		return cache.containsKey(url);
+	}
 
 	public CacheItem retrieveIfExistsAndNewerThan2Hours(String url) {
 		if(cache.containsKey(url)) {
