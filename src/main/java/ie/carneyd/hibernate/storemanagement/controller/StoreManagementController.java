@@ -10,10 +10,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -58,7 +59,7 @@ public class StoreManagementController {
 
 	@Operation(summary="Save a list of Items to the Database")
 	@PostMapping(path="/all-items", consumes=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Iterable<Item>> createItems(
+	public ResponseEntity<List<Item>> createItems(
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(
 					description="Items for Creation", required=true)
 			@RequestBody List<Item> items) {
@@ -70,7 +71,7 @@ public class StoreManagementController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		return new ResponseEntity<>(itemsCreated, HttpStatus.OK);
+		return new ResponseEntity<>((List) itemsCreated, HttpStatus.OK);
 	}
 
 	@Operation(summary="Get an Item by Primary Key")
@@ -165,7 +166,8 @@ public class StoreManagementController {
 	}
 
 	@Operation(summary="Update Item")
-	@PatchMapping(path="/item", consumes=MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(path="/item", consumes=MediaType.APPLICATION_JSON_VALUE, 
+				method={RequestMethod.PUT, RequestMethod.PATCH})
 	public ResponseEntity<Item> updateItem(
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(
 					description="Item for Updating", required=true)
